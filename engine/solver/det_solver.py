@@ -24,7 +24,7 @@ class DetSolver(BaseSolver):
     def fit(self, ):
         self.train()
         args = self.cfg
-        print(len(self.val_dataloader))
+        print(len(self.train_dataloader))
 
         n_parameters, model_stats = stats(self.cfg)
         print(model_stats)
