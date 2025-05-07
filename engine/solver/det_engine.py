@@ -11,6 +11,8 @@ import sys
 import math
 from typing import Iterable
 
+from torch.utils.data import DataLoader
+
 import torch
 import torch.amp
 from torch.utils.tensorboard import SummaryWriter
@@ -22,7 +24,7 @@ from ..misc import MetricLogger, SmoothedValue, dist_utils
 
 
 def train_one_epoch(self_lr_scheduler, lr_scheduler, model: torch.nn.Module, criterion: torch.nn.Module,
-                    data_loader: Iterable, optimizer: torch.optim.Optimizer,
+                    data_loader: DataLoader, optimizer: torch.optim.Optimizer,
                     device: torch.device, epoch: int, max_norm: float = 0, **kwargs):
     model.train()
     criterion.train()
@@ -36,8 +38,9 @@ def train_one_epoch(self_lr_scheduler, lr_scheduler, model: torch.nn.Module, cri
     ema :ModelEMA = kwargs.get('ema', None)
     scaler :GradScaler = kwargs.get('scaler', None)
     lr_warmup_scheduler :Warmup = kwargs.get('lr_warmup_scheduler', None)
-
     cur_iters = epoch * len(data_loader)
+
+    print(len(data_loader))
 
     for i, (samples, targets) in enumerate(metric_logger.log_every(data_loader, print_freq, header)):
         samples = samples.to(device)
