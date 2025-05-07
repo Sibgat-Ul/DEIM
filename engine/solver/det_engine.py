@@ -36,12 +36,10 @@ def train_one_epoch(self_lr_scheduler, lr_scheduler, model: torch.nn.Module, cri
     ema :ModelEMA = kwargs.get('ema', None)
     scaler :GradScaler = kwargs.get('scaler', None)
     lr_warmup_scheduler :Warmup = kwargs.get('lr_warmup_scheduler', None)
-    print(data_loader.sampler)
+
     cur_iters = epoch * len(data_loader)
 
     for i, (samples, targets) in enumerate(metric_logger.log_every(data_loader, print_freq, header)):
-        print(i, len(data_loader))
-        print("DEEEEEEEEEEEEBBBBUUUUUUUUUUUUUUUUUUUGGGGGGGGG")
         samples = samples.to(device)
         targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
         global_step = epoch * len(data_loader) + i
