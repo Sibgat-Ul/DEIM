@@ -20,6 +20,15 @@ from .._misc import Image, Video, Mask, BoundingBoxes
 from .._misc import SanitizeBoundingBoxes
 
 from ...core import register
+
+class DebugSanitizeBoundingBoxes(SanitizeBoundingBoxes):
+    def __call__(self, image, target):
+        orig_boxes = len(target["boxes"])
+        image, target = super().__call__(image, target)
+        if len(target["boxes"]) < orig_boxes:
+            print(f"Filtered {orig_boxes - len(target['boxes'])} boxes")
+        return image, target
+
 torchvision.disable_beta_transforms_warning()
 
 
@@ -30,7 +39,7 @@ Resize = register()(T.Resize)
 # ToImageTensor = register()(T.ToImageTensor)
 # ConvertDtype = register()(T.ConvertDtype)
 # PILToTensor = register()(T.PILToTensor)
-SanitizeBoundingBoxes = register(name='SanitizeBoundingBoxes')(SanitizeBoundingBoxes)
+SanitizeBoundingBoxes = register(name='SanitizeBoundingBoxes')(DebugSanitizeBoundingBoxes)
 RandomCrop = register()(T.RandomCrop)
 Normalize = register()(T.Normalize)
 
