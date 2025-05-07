@@ -39,7 +39,7 @@ def train_one_epoch(self_lr_scheduler, lr_scheduler, model: torch.nn.Module, cri
 
     cur_iters = epoch * len(data_loader)
 
-    for i, (samples, targets) in enumerate(metric_logger.log_every(data_loader, print_freq, header)):
+    for i, (samples, targets) in enumerate(data_loader):
         samples = samples.to(device)
         targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
         print("=" * 6, "DEBUG", "=" * 6)
