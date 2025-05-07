@@ -38,6 +38,10 @@ class CocoDetection(torchvision.datasets.CocoDetection, DetDataset):
         self.return_masks = return_masks
         self.remap_mscoco_category = remap_mscoco_category
 
+        print("=" * 6, "DEBUG", "=" * 6)
+        print(self.img_folder, ann_file)
+        print("=" * 6, "DEBUG", "=" * 6)
+
     def __getitem__(self, idx):
         img, target = self.load_item(idx)
         if self._transforms is not None:

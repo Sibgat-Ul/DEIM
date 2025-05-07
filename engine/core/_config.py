@@ -135,9 +135,6 @@ class BaseConfig(object):
 
     @property
     def train_dataloader(self) -> DataLoader:
-        print("="*6, "DEBUG", "="*6)
-        print(self.train_dataset)
-        print("=" * 6, "DEBUG", "=" * 6)
         if self._train_dataloader is None and self.train_dataset is not None:
             loader = DataLoader(self.train_dataset,
                                 batch_size=self.train_batch_size,
