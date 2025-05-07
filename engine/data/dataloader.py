@@ -54,8 +54,6 @@ class DataLoader(data.DataLoader):
         print(self.dataset)
         print("=" * 6, "=====", "=" * 6)
 
-        print(self.__annotations__)
-
     @property
     def epoch(self):
         return self._epoch if hasattr(self, '_epoch') else -1
