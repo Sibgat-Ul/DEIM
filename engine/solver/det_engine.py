@@ -38,6 +38,9 @@ def train_one_epoch(self_lr_scheduler, lr_scheduler, model: torch.nn.Module, cri
     lr_warmup_scheduler :Warmup = kwargs.get('lr_warmup_scheduler', None)
 
     cur_iters = epoch * len(data_loader)
+    print("=" * 6, "DEBUG", "=" * 6)
+    print(f"at engine: {data_loader}")
+    print("=" * 6, "=====", "=" * 6)
 
     for i, (samples, targets) in enumerate(data_loader):
         samples = samples.to(device)
