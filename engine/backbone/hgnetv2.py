@@ -455,16 +455,16 @@ class HGNetv2(nn.Module):
 
         # stem
         self.stem = StemBlock(
-                in_chs=stem_channels[0],
-                mid_chs=stem_channels[1],
-                out_chs=stem_channels[2],
-                use_lab=use_lab)
+            in_chs=stem_channels[0],
+            mid_chs=stem_channels[1],
+            out_chs=stem_channels[2],
+            use_lab=use_lab)
 
         # stages
         self.stages = nn.ModuleList()
         for i, k in enumerate(stage_config):
-            in_channels, mid_channels, out_channels, block_num, downsample, light_block, kernel_size, layer_num = stage_config[
-                k]
+            in_channels, mid_channels, out_channels, block_num, downsample, light_block, kernel_size, layer_num = \
+            stage_config[k]
             self.stages.append(
                 HG_Stage(
                     in_channels,
@@ -489,32 +489,51 @@ class HGNetv2(nn.Module):
         if pretrained:
             RED, GREEN, RESET = "\033[91m", "\033[92m", "\033[0m"
             try:
-                model_path = local_model_dir + 'PPHGNetV2_' + name + '_stage1.pth'
-                if os.path.exists(model_path):
-                    state = torch.load(model_path, map_location='cpu')
-                    print(f"Loaded stage1 {name} HGNetV2 from local file.")
-                else:
-                    # If the file doesn't exist locally, download from the URL
-                    if torch.distributed.get_rank() == 0:
-                        print(GREEN + "If the pretrained HGNetV2 can't be downloaded automatically. Please check your network connection." + RESET)
-                        print(GREEN + "Please check your network connection. Or download the model manually from " + RESET + f"{download_url}" + GREEN + " to " + RESET + f"{local_model_dir}." + RESET)
-                        state = torch.hub.load_state_dict_from_url(download_url, map_location='cpu', model_dir=local_model_dir)
-                        torch.distributed.barrier()
-                    else:
-                        torch.distributed.barrier()
-                        state = torch.load(local_model_dir)
+                # Ensure the directory exists
+                os.makedirs(local_model_dir, exist_ok=True)
 
-                    print(f"Loaded stage1 {name} HGNetV2 from URL.")
+                # Construct full model path
+                model_filename = f'PPHGNetV2_{name}_stage1.pth'
+                model_path = os.path.join(local_model_dir, model_filename)
 
+                # Rank 0 handles the download
+                if torch.distributed.get_rank() == 0:
+                    if not os.path.exists(model_path):
+                        print(
+                            GREEN + "If the pretrained HGNetV2 can't be downloaded automatically. Please check your network connection." + RESET)
+                        print(
+                            GREEN + "Please check your network connection. Or download the model manually from " + RESET + f"{download_url}" + GREEN + " to " + RESET + f"{local_model_dir}." + RESET)
+
+                        # Download and explicitly save the file
+                        state = torch.hub.load_state_dict_from_url(
+                            download_url,
+                            map_location='cpu',
+                            model_dir=local_model_dir,
+                            check_hash=True
+                        )
+                        torch.save(state, model_path)
+                        print(f"Saved pretrained weights to {model_path}")
+
+                # All ranks wait here
+                torch.distributed.barrier()
+
+                # All ranks load the file
+                if not os.path.exists(model_path):
+                    raise FileNotFoundError(f"Pretrained weights not found at {model_path}")
+
+                state = torch.load(model_path, map_location='cpu', weights_only=True)
                 self.load_state_dict(state)
+                print(
+                    f"Loaded stage1 {name} HGNetV2 from {'local file' if torch.distributed.get_rank() != 0 else 'URL'}")
 
             except (Exception, KeyboardInterrupt) as e:
                 if torch.distributed.get_rank() == 0:
                     print(f"{str(e)}")
                     logging.error(RED + "CRITICAL WARNING: Failed to load pretrained HGNetV2 model" + RESET)
                     logging.error(GREEN + "Please check your network connection. Or download the model manually from " \
-                                + RESET + f"{download_url}" + GREEN + " to " + RESET + f"{local_model_dir}." + RESET)
-                exit()
+                                  + RESET + f"{download_url}" + GREEN + " to " + RESET + f"{local_model_dir}." + RESET)
+                torch.distributed.barrier()  # Ensure all processes exit
+                raise RuntimeError("Failed to load pretrained weights") from e
 
 
 
