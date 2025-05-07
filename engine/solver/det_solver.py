@@ -29,7 +29,6 @@ class DetSolver(BaseSolver):
         print(self.train_dataloader)
         print("=" * 6, "=====", "=" * 6)
 
-
         n_parameters, model_stats = stats(self.cfg)
         print(model_stats)
         print("-"*42 + "Start training" + "-"*43)
