@@ -50,9 +50,6 @@ class DataLoader(data.DataLoader):
         self._epoch = epoch
         self.dataset.set_epoch(epoch)
         self.collate_fn.set_epoch(epoch)
-        print("=" * 6, "DEBUG", "=" * 6)
-        print(self.dataset)
-        print("=" * 6, "=====", "=" * 6)
 
     @property
     def epoch(self):

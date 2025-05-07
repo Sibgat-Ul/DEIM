@@ -40,6 +40,8 @@ def train_one_epoch(self_lr_scheduler, lr_scheduler, model: torch.nn.Module, cri
     cur_iters = epoch * len(data_loader)
     print("=" * 6, "DEBUG", "=" * 6)
     print(f"at engine: {data_loader}")
+
+    print(next(iter(data_loader)))
     print("=" * 6, "=====", "=" * 6)
 
     for i, (samples, targets) in enumerate(data_loader):

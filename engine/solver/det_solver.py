@@ -39,6 +39,7 @@ class DetSolver(BaseSolver):
             print("=" * 6, "DEBUG", "=" * 6)
             print(iter_per_epoch)
             print("=" * 6, "=====", "=" * 6)
+
             print("     ## Using Self-defined Scheduler-{} ## ".format(args.lrsheduler))
             self.lr_scheduler = FlatCosineLRScheduler(self.optimizer, args.lr_gamma, iter_per_epoch, total_epochs=args.epoches, 
                                                 warmup_iter=args.warmup_iter, flat_epochs=args.flat_epoch, no_aug_epochs=args.no_aug_epoch)
