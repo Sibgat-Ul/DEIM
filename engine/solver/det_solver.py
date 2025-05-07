@@ -62,7 +62,7 @@ class DetSolver(BaseSolver):
         start_time = time.time()
         start_epoch = self.last_epoch + 1
         print("#"*6, "DEBUG", "#"*6)
-        print(self.train_dataloader.sampler)
+        print(list(self.train_dataloader.sampler)[:5])
         print("#"*6, "=====", "#"*6)
 
         for epoch in range(start_epoch, args.epoches):
