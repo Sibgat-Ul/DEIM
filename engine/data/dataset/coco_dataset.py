@@ -42,7 +42,7 @@ class CocoDetection(torchvision.datasets.CocoDetection, DetDataset):
         print(self.img_folder, ann_file)
         img, target = self.load_item(0)
         print(img, target)
-        print("=" * 6, "DEBUG", "=" * 6)
+        print("=" * 6, "=====", "=" * 6)
 
     def __getitem__(self, idx):
         img, target = self.load_item(idx)
