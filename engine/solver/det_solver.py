@@ -25,10 +25,6 @@ class DetSolver(BaseSolver):
         self.train()
         args = self.cfg
 
-        print("=" * 6, "DEBUG", "=" * 6)
-        print(self.train_dataloader)
-        print("=" * 6, "=====", "=" * 6)
-
         n_parameters, model_stats = stats(self.cfg)
         print(model_stats)
         print("-"*42 + "Start training" + "-"*43)
@@ -36,10 +32,6 @@ class DetSolver(BaseSolver):
         self.self_lr_scheduler = False
         if args.lrsheduler is not None:
             iter_per_epoch = len(self.train_dataloader)
-            print("=" * 6, "DEBUG", "=" * 6)
-            print(iter_per_epoch)
-            print("=" * 6, "=====", "=" * 6)
-
             print("     ## Using Self-defined Scheduler-{} ## ".format(args.lrsheduler))
             self.lr_scheduler = FlatCosineLRScheduler(self.optimizer, args.lr_gamma, iter_per_epoch, total_epochs=args.epoches, 
                                                 warmup_iter=args.warmup_iter, flat_epochs=args.flat_epoch, no_aug_epochs=args.no_aug_epoch)
@@ -69,6 +61,10 @@ class DetSolver(BaseSolver):
         best_stat_print = best_stat.copy()
         start_time = time.time()
         start_epoch = self.last_epoch + 1
+        print("#"*6, "DEBUG", "#"*6)
+        print(self.train_dataloader.sampler)
+        print("#"*6, "=====", "#"*6)
+
         for epoch in range(start_epoch, args.epoches):
 
             self.train_dataloader.set_epoch(epoch)
