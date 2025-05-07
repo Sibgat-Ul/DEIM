@@ -536,8 +536,6 @@ class HGNetv2(nn.Module):
                 raise RuntimeError("Failed to load pretrained weights") from e
 
 
-
-
     def _freeze_norm(self, m: nn.Module):
         if isinstance(m, nn.BatchNorm2d):
             m = FrozenBatchNorm2d(m.num_features)
