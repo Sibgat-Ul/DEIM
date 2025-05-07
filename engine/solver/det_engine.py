@@ -43,6 +43,15 @@ def train_one_epoch(self_lr_scheduler, lr_scheduler, model: torch.nn.Module, cri
     print("=" * 6, "=====", "=" * 6)
 
     for i, (samples, targets) in enumerate(data_loader):
+        print("=" * 6, "DEBUG", "=" * 6)
+        print(f"len(samples) = {len(samples)} len(targets) = {len(targets)}", flush=True)
+        print("=" * 6, "=====", "=" * 6)
+        print("=" * 6, "=====", "=" * 6)
+        print("=" * 6, "=====", "=" * 6)
+        print("=" * 6, "=====", "=" * 6)
+        print("=" * 6, "=====", "=" * 6)
+
+    for i, (samples, targets) in enumerate(data_loader):
         samples = samples.to(device)
         targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
         print("=" * 6, "DEBUG", "=" * 6)
