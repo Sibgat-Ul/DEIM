@@ -20,52 +20,6 @@ from .._misc import Image, Video, Mask, BoundingBoxes
 from .._misc import SanitizeBoundingBoxes
 
 from ...core import register
-
-class DebugSanitizeBoundingBoxes(SanitizeBoundingBoxes):
-    def forward(self, *inputs: Any) -> Any:
-        inputs = inputs if len(inputs) > 1 else inputs[0]
-
-        print("DebugSanitizeBoundingBoxes.forward")
-        print(inputs)
-        print("DebugSanitizeBoundingBoxes.forward")
-
-        labels = self._labels_getter(inputs)
-        if labels is not None:
-            msg = "The labels in the input to forward() must be a tensor or None, got {type} instead."
-            if isinstance(labels, torch.Tensor):
-                labels = (labels,)
-            elif isinstance(labels, (tuple, list)):
-                for entry in labels:
-                    if not isinstance(entry, torch.Tensor):
-                        # TODO: we don't need to enforce tensors, just that entries are indexable as t[bool_mask]
-                        raise ValueError(msg.format(type=type(entry)))
-            else:
-                raise ValueError(msg.format(type=type(labels)))
-
-        flat_inputs, spec = self.tree_flatten(inputs)
-        boxes = self.get_bounding_boxes(flat_inputs)
-
-        if labels is not None:
-            for label in labels:
-                if boxes.shape[0] != label.shape[0]:
-                    raise ValueError(
-                        f"Number of boxes (shape={boxes.shape}) and must match the number of labels."
-                        f"Found labels with shape={label.shape})."
-                    )
-
-        valid = F._misc._get_sanitize_bounding_boxes_mask(
-            boxes,
-            format=boxes.format,
-            canvas_size=boxes.canvas_size,
-            min_size=self.min_size,
-            min_area=self.min_area,
-        )
-
-        params = dict(valid=valid, labels=labels)
-        flat_outputs = [self._transform(inpt, params) for inpt in flat_inputs]
-
-        return tree_unflatten(flat_outputs, spec)
-
 torchvision.disable_beta_transforms_warning()
 
 
@@ -76,7 +30,7 @@ Resize = register()(T.Resize)
 # ToImageTensor = register()(T.ToImageTensor)
 # ConvertDtype = register()(T.ConvertDtype)
 # PILToTensor = register()(T.PILToTensor)
-SanitizeBoundingBoxes = register(name='SanitizeBoundingBoxes')(DebugSanitizeBoundingBoxes)
+SanitizeBoundingBoxes = register(name='SanitizeBoundingBoxes')(SanitizeBoundingBoxes)
 RandomCrop = register()(T.RandomCrop)
 Normalize = register()(T.Normalize)
 
