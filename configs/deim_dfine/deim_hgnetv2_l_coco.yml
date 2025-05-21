@@ -20,18 +20,18 @@ optimizer:
   weight_decay: 0.000125
   
 # Increase to search for the optimal ema
-epoches: 58 # 72 + 2n
+epoches: 30 # 72 + 2n
 
 ## Our LR-Scheduler
-flat_epoch: 29    # 4 + epoch // 2, e.g., 40 = 4 + 72 / 2
-no_aug_epoch: 8
+flat_epoch: 19    # 4 + epoch // 2, e.g., 40 = 4 + 72 / 2
+no_aug_epoch: 20
 
 train_dataloader: 
   dataset: 
     transforms:
       policy:
-        epoch: [4, 29, 50]   # list 
+        epoch: [4, 19, 24]   # list
 
   collate_fn:
-    mixup_epochs: [4, 29]
-    stop_epoch: 50
+    mixup_epochs: [4, 19]
+    stop_epoch: 20

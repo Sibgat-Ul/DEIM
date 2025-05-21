@@ -432,7 +432,7 @@ class HGNetv2(nn.Module):
                  freeze_norm=True,
                  pretrained=True,
                  local_model_dir='weight/hgnetv2/',
-                 fusion_type='attention'):
+                 fusion_type='concat'):
         super().__init__()
         self.use_lab = use_lab
         self.return_idx = return_idx
