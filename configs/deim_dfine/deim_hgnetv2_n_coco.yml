@@ -33,12 +33,15 @@ lr_gamma: 1.0
 
 ## Our DataAug
 train_dataloader: 
-  dataset: 
+  total_batch_size: 32
+  dataset:
     transforms:
       policy:
-        epoch: [4, 78, 148]   # list 
+        epoch: [4, 19, 24]   # list
 
   collate_fn:
-    mixup_epochs: [4, 19, 24]
+    mixup_epochs: [4, 19]
     stop_epoch: 20
-    base_size_repeat: ~
+
+val_dataloader:
+  total_batch_size: 32
